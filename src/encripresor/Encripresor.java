@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package encripesor;
+package encripresor;
+
+import java.math.BigDecimal;
 
 /**
  *
- * @author FERNANDO REVOLLO
+ * @author Vanessa Sanjinez
  */
-public class Encripesor {
+public class Encripresor {
 
     /**
      * @param args the command line arguments
@@ -17,10 +19,11 @@ public class Encripesor {
     public static void main(String[] args) {
         // TODO code application logic here
         codificacionAritmetica codificador = new codificacionAritmetica("ABACB");
-        //codificador.construirMapa();
-        //codificador.probabilidades();
-        //codificador.rangos();
-        codificador.prueba();
+        codificador.construirMapa();
+        codificador.probabilidades();
+        codificador.rangos();
+        codificador.codificar();
+        codificador.decodificador();
     }
     
 }

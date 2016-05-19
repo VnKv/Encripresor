@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package encripesor;
+package encripresor;
 
 import java.util.*;
 
@@ -14,22 +14,24 @@ import java.util.*;
 public class codificacionAritmetica {
     
     private String mensaje;
-    private Map<String,Double> map;
+    private Map<String,Float> map;
     private Map<String,tupla> mapTuplas;
-    private double mensajeCodificado;
+    private float mensajeCodificado;
+    private String mensajeDecodificado;
     
     public codificacionAritmetica(String mensaje){
-        this.map = new HashMap<String,Double>();
+        this.map = new HashMap<String,Float>();
         this.mapTuplas = new HashMap<String,tupla>();
         this.mensaje = mensaje;
         this.mensajeCodificado = 0;
+        this.mensajeDecodificado = "";
     }
 
     //Obtiene las probabilidades de cada caracter que se encuentra en el mensaje
     public void probabilidades(){
         String letra;
-        double largo = (double) mensaje.length();
-        double probabilidad;
+        float largo = (float) mensaje.length();
+        float probabilidad;
         Iterator it = map.keySet().iterator();
         while(it.hasNext()){
             letra = it.next().toString();
@@ -50,7 +52,7 @@ public class codificacionAritmetica {
     //de este
     public void agregarLetra(String letra){
         if(!map.containsKey(letra)){
-            map.put(letra,1.0);
+            map.put(letra,1f);
         }else{
             map.put(letra,map.get(letra)+1);
         }
@@ -67,8 +69,8 @@ public class codificacionAritmetica {
     //Calculas los rangos de cada caracter del mapa
     public void rangos(){
         String letra;
-        double rangominTemporal = 0;
-        double rangomaxTemporal = 0;
+        float rangominTemporal = 0;
+        float rangomaxTemporal = 0;
         Iterator it = map.keySet().iterator();
         while(it.hasNext()){
             letra = it.next().toString();
@@ -90,30 +92,32 @@ public class codificacionAritmetica {
                     +mapTuplas.get(letra).getRangomax()+"]");
         }
     }
-    
+    //Calculo de nueva Rango para el proceso de compresion
     public tupla nuevoRango(tupla rangoActual,String letra){
         tupla nuevoRango =  new tupla(0,0);
-        double a = rangoActual.getRangomin();
-        double b = rangoActual.getRangomax();
-        double ai = mapTuplas.get(letra).getRangomin();
-        double bi = mapTuplas.get(letra).getRangomax();
+        float a = rangoActual.getRangomin();
+        float b = rangoActual.getRangomax();
+        float ai = mapTuplas.get(letra).getRangomin();
+        float bi = mapTuplas.get(letra).getRangomax();
         nuevoRango.setRangomin(a+((b-a)*ai));
         nuevoRango.setRangomax(a+((b-a)*bi));
         return nuevoRango;
     }
     
     public void prueba(){
-        tupla ta = new tupla(0,0.5);
-        tupla tb = new tupla(0.5,0.7);
-        tupla tc = new tupla(0.7,1.0);
+        tupla ta = new tupla(0f,0.5f);
+        tupla tb = new tupla(0.5f,0.7f);
+        tupla tc = new tupla(0.7f,1.0f);
         mapTuplas.put("A",ta);
         mapTuplas.put("B",tb);
         mapTuplas.put("C",tc);
         codificar();
         System.out.println("Mensaje Codificado: "+mensajeCodificado);
+        decodificador();
     }
-    
+    //Codificador aritmetico
     public void codificar(){
+        System.out.println("Codificacion");
         tupla actual = new tupla(0,1);
         for(int i=0;i<mensaje.length();i++){
             String letra = Character.toString(mensaje.charAt(i));
@@ -124,31 +128,67 @@ public class codificacionAritmetica {
             actual = nueva;
         }
         mensajeCodificado = actual.getRangomin();
+        System.out.println("Mensaje Codificacido: "+mensajeCodificado);
+    }
+    
+    public void decodificador(){
+        System.out.println("Decodificacion");
+        float valorRango = mensajeCodificado;
+        String letra;
+        for(int i=0;i<mensaje.length();i++){
+            letra = enRango(valorRango);
+            System.out.println("ValorRango: "+valorRango
+                    +"LetraDecodificada: " + letra);
+            mensajeDecodificado = mensajeDecodificado + letra;
+            valorRango = valorRango(valorRango,mapTuplas.get(letra));
+        }
+        System.out.println("Mensaje Decodificado: "+mensajeDecodificado);
+    }
+    
+    public float valorRango(float valorActual,tupla rango){
+        float a = rango.getRangomin();
+        float b = rango.getRangomax();
+        float ai = valorActual;
+        return (ai - a) /(b - a);
+    }
+    
+    public String enRango(float valorRango){
+        String letra = "";
+        Iterator it = mapTuplas.keySet().iterator();
+        while(it.hasNext()){
+            letra = it.next().toString();
+            if(mapTuplas.get(letra).getRangomin() <= valorRango 
+                    && valorRango < mapTuplas.get(letra).getRangomax()){
+                return letra;
+            }
+        }
+        return null;
     }
     
     class tupla{
-        double rangomin;
-        double rangomax;
+        float rangomin;
+        float rangomax;
 
-        public tupla(double rangomin,double rangomax){
+        public tupla(float rangomin, float rangomax) {
             this.rangomin = rangomin;
             this.rangomax = rangomax;
         }
 
-        public double getRangomin() {
+        public float getRangomin() {
             return rangomin;
         }
 
-        public void setRangomin(double rangomin) {
+        public void setRangomin(float rangomin) {
             this.rangomin = rangomin;
         }
 
-        public double getRangomax() {
+        public float getRangomax() {
             return rangomax;
         }
 
-        public void setRangomax(double rangomax) {
+        public void setRangomax(float rangomax) {
             this.rangomax = rangomax;
         }
+        
     }
 }
