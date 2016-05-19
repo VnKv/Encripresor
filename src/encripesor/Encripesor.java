@@ -19,6 +19,7 @@ public class Encripesor {
         codificacionAritmetica codificador = new codificacionAritmetica("ESTE ES EL MENSAJE");
         codificador.construirMapa();
         codificador.probabilidades();
+        codificador.rangos();
     }
     
 }
