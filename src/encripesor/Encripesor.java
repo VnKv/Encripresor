@@ -16,10 +16,11 @@ public class Encripesor {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        codificacionAritmetica codificador = new codificacionAritmetica("ESTE ES EL MENSAJE");
-        codificador.construirMapa();
-        codificador.probabilidades();
-        codificador.rangos();
+        codificacionAritmetica codificador = new codificacionAritmetica("ABACB");
+        //codificador.construirMapa();
+        //codificador.probabilidades();
+        //codificador.rangos();
+        codificador.prueba();
     }
     
 }

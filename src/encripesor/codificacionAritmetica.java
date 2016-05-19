@@ -16,13 +16,15 @@ public class codificacionAritmetica {
     private String mensaje;
     private Map<String,Double> map;
     private Map<String,tupla> mapTuplas;
+    private double mensajeCodificado;
     
     public codificacionAritmetica(String mensaje){
         this.map = new HashMap<String,Double>();
         this.mapTuplas = new HashMap<String,tupla>();
         this.mensaje = mensaje;
+        this.mensajeCodificado = 0;
     }
-    
+
     //Obtiene las probabilidades de cada caracter que se encuentra en el mensaje
     public void probabilidades(){
         String letra;
@@ -62,7 +64,7 @@ public class codificacionAritmetica {
             System.out.println("Clave: "+letra+" Valor: "+map.get(letra));
         }
     }
-    
+    //Calculas los rangos de cada caracter del mapa
     public void rangos(){
         String letra;
         double rangominTemporal = 0;
@@ -77,7 +79,7 @@ public class codificacionAritmetica {
         }
         revisarMapaTuplas();
     }
-    
+    //Muestra los rango de cada uno de los caracteres del mensaje
     public void revisarMapaTuplas(){
         String letra = "";
         Iterator it = mapTuplas.keySet().iterator();
@@ -87,6 +89,41 @@ public class codificacionAritmetica {
                     +mapTuplas.get(letra).getRangomin()+","
                     +mapTuplas.get(letra).getRangomax()+"]");
         }
+    }
+    
+    public tupla nuevoRango(tupla rangoActual,String letra){
+        tupla nuevoRango =  new tupla(0,0);
+        double a = rangoActual.getRangomin();
+        double b = rangoActual.getRangomax();
+        double ai = mapTuplas.get(letra).getRangomin();
+        double bi = mapTuplas.get(letra).getRangomax();
+        nuevoRango.setRangomin(a+((b-a)*ai));
+        nuevoRango.setRangomax(a+((b-a)*bi));
+        return nuevoRango;
+    }
+    
+    public void prueba(){
+        tupla ta = new tupla(0,0.5);
+        tupla tb = new tupla(0.5,0.7);
+        tupla tc = new tupla(0.7,1.0);
+        mapTuplas.put("A",ta);
+        mapTuplas.put("B",tb);
+        mapTuplas.put("C",tc);
+        codificar();
+        System.out.println("Mensaje Codificado: "+mensajeCodificado);
+    }
+    
+    public void codificar(){
+        tupla actual = new tupla(0,1);
+        for(int i=0;i<mensaje.length();i++){
+            String letra = Character.toString(mensaje.charAt(i));
+            tupla nueva = nuevoRango(actual,letra);
+            System.out.println("Clave: "+letra+" Valor: ["
+                    +nueva.getRangomin()+","
+                    +nueva.getRangomax()+"]");
+            actual = nueva;
+        }
+        mensajeCodificado = actual.getRangomin();
     }
     
     class tupla{
